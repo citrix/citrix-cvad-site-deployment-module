@@ -1,0 +1,49 @@
+[Version]
+
+Signature="$Windows NT$"
+
+[NewRequest]
+
+;[%SUBJECT%]
+
+Exportable = TRUE 
+
+;[%KEYLENGTH%] 
+
+KeySpec = 1 ; Key Exchange – Required for encryption
+
+KeyUsage = 0xA0 ; Digital Signature, Key Encipherment
+
+MachineKeySet = True
+
+ProviderName = "Microsoft RSA SChannel Cryptographic Provider"
+
+SMIME = false
+
+RequestType = CMC ; or CMC.
+
+;[%FRIENDLYNAME%]
+
+
+[Extensions]
+; If your client operating system is Windows Server 2008, Windows Server 2008 R2, Windows Vista, or Windows 7
+; SANs can be included in the Extensions section by using the following text format. Note 2.5.29.17 is the OID for a SAN extension.
+
+
+;[%SAN%]
+
+[EnhancedKeyUsageExtension]
+
+; If you are using an enterprise CA the EnhancedKeyUsageExtension section can be omitted
+
+OID=1.3.6.1.5.5.7.3.1 ; Server Authentication
+
+OID=1.3.6.1.5.5.7.3.2 ; Client Authentication
+
+[RequestAttributes]
+
+; Multiple alternative names must be separated by an ampersand (&).
+
+;[%TEMPLATE%]
+
+;Required only for enterprise CAs.
