@@ -114,7 +114,7 @@ function Remove-TerraformResourcesWithPattern {
     $targetResources = terraform state list | Select-String -Pattern $Pattern
     foreach ($targetResource in $targetResources) {
         if ($Destroy) {
-            terraform destroy -refresh=false -var-file="$genTfVarsFilePath" -target="$($targetResource)" -AutoApprove
+            terraform destroy -refresh=false -var-file="$genTfVarsFilePath" -target="$($targetResource)" -auto-approve
         }
         else {
             terraform state rm $targetResource

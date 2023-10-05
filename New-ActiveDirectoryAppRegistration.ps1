@@ -32,7 +32,7 @@ param (
     [Parameter(Mandatory = $false)]
     [switch]$IncludeAzModule,
     [Parameter(Mandatory = $false)]
-    [string]$TenantId,
+    [string]$AzureTenantId,
     [Parameter(Mandatory = $false)]
     [string]$ApplicationId,
     [Parameter(Mandatory = $false)]
@@ -134,13 +134,18 @@ elseif (([Version]$installedAzModule.Version).Major -lt 9) {
 }
 
 Write-Host "Connecting to user Azure account..."
-if ($TenantId -and $ApplicationId -and $ApplicationPassword){
+if ($AzureTenantId -and $ApplicationId -and $ApplicationPassword) {
     $SecurePassword = ConvertTo-SecureString -String $ApplicationPassword -AsPlainText -Force
     $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $ApplicationId, $SecurePassword
-    Connect-AzAccount -Subscription $AzureSubscriptionId -ServicePrincipal -TenantId $TenantId -Credential $Credential | Out-Null
+    Connect-AzAccount -Subscription $AzureSubscriptionId -ServicePrincipal -TenantId $AzureTenantId -Credential $Credential | Out-Null
 }
 else {
-    Connect-AzAccount -Subscription $AzureSubscriptionId -ErrorAction Stop | Out-Null
+    if ($AzureTenantId){
+        Connect-AzAccount -Subscription $AzureSubscriptionId -Tenant $AzureTenantId -ErrorAction Stop | Out-Null
+    }
+    else {
+        Connect-AzAccount -Subscription $AzureSubscriptionId -ErrorAction Stop | Out-Null
+    }
 }
 $tenantId = (Get-AzSubscription -SubscriptionId $AzureSubscriptionId).TenantId
 
