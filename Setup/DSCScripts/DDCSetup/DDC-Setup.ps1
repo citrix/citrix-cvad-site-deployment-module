@@ -1003,9 +1003,10 @@ Configuration CVADComponentAndSiteSetup
 
             SetScript            = {
                 try {
+                    $configurationSlot = Get-BrokerConfigurationSlot -Name "RS"
                     $storefrontUrl = $using:StoreFrontAddress + "$(($using:StoreVirtualPath).TrimEnd('/'))Web"
-                    $configuration = New-BrokerStorefrontAddress -Description "SHC Storefront Address" -Enabled $true -Name "Citrix StoreFront" -Url $storefrontUrl
-                    New-BrokerMachineConfiguration -Policy $configuration -ConfigurationSlotUid 1 -Description "Citrix Storefront Address" -LeafName $using:SFStoreFriendlyName
+                    $configuration = New-BrokerStorefrontAddress -Description "Citrix Storefront Address" -Enabled $true -Name "Citrix StoreFront" -Url $storefrontUrl
+                    New-BrokerMachineConfiguration -Policy $configuration -ConfigurationSlotUid $configurationSlot.Uid -Description "Citrix Storefront Address" -LeafName $using:SFStoreFriendlyName
                 }
                 catch {
                     $string_err = $_ | Out-String
