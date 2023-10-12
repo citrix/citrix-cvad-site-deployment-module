@@ -1,4 +1,4 @@
-# Quick Start Guide
+# Site Deployment Module for Citrix® Virtual Apps and Desktops
 ## Environment Requirement
 1. PowerShell with version `5.0` or higher
 2. PowerShell `Az` module with version `9.0.0` or higher
