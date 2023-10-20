@@ -33,7 +33,10 @@
 # Attributions
 The code in this repository makes use of the following packages:
 - Hashicorp Terraform (https://github.com/hashicorp/terraform)
+- Terraform Provider Archive (https://github.com/hashicorp/terraform-provider-archive)
 - Terraform Provider for Azure (https://github.com/hashicorp/terraform-provider-azurerm)
+- Terraform Provider Null (https://github.com/hashicorp/terraform-provider-null)
+- Terraform Provider Random (https://github.com/hashicorp/terraform-provider-random)
 
 
 # License 
