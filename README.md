@@ -1,4 +1,7 @@
 # Site Deployment Module for Citrix® Virtual Apps and Desktops
+
+The Site Deployment Module for Citrix® Virtual Apps and Desktops aims to provide a simplified way to deploy a functional site. This module also offers flexibility and options to customize the site. A single command can be used to deploy the entire site without worrying about all of the technical details.
+
 ## Environment Requirement
 1. PowerShell with version `5.0` or higher
 2. PowerShell `Az` module with version `9.0.0` or higher
