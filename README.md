@@ -8,8 +8,9 @@ The Site Deployment Module for Citrix® Virtual Apps and Desktops aims to provid
 3. Terraform with version `1.1.0` or higher
 
 ## Deployment
-1. Please open a PowerShell session with **Administrator privilege**
-2. Run the following command in the PowerShell session to set the execution policy
+1. Make a copy of the `azure.tfvars.example` and the `inputs.tfvars.example` files. Then rename the new files to `azure.tfvars` and `inputs.tfvars` respectively
+2. Please open a PowerShell session with **Administrator privilege**
+3. Run the following command in the PowerShell session to set the execution policy
 
 > `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force`   
 
