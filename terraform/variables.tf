@@ -131,6 +131,14 @@ variable "advm_admin_password" {
   sensitive   = true
 
   default = ""
+  validation {
+    condition = var.advm_admin_password == "" || alltrue([can(regex("[0-9]+", var.advm_admin_password)), 
+                         can(regex("[A-Z]+", var.advm_admin_password)), 
+                         can(regex("[a-z]+", var.advm_admin_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.advm_admin_password)),
+                         length(var.advm_admin_password) >= 8])
+    error_message = "Variable advm_admin_password must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
 
 variable "active_directory_domain_name" {
@@ -176,6 +184,15 @@ variable "ad_default_user_password" {
   description = "Password for the default users added to the Active Directory."
   sensitive   = true
   default     = ""
+
+  validation {
+    condition = var.ad_default_user_password == "" || alltrue([can(regex("[0-9]+", var.ad_default_user_password)), 
+                         can(regex("[A-Z]+", var.ad_default_user_password)), 
+                         can(regex("[a-z]+", var.ad_default_user_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.ad_default_user_password)),
+                         length(var.ad_default_user_password) >= 8])
+    error_message = "Variable ad_default_user_password must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
 
 ################################################################################
@@ -217,6 +234,15 @@ variable "ddc_admin_password" {
   description = "Admin password of the DDC VM"
   sensitive   = true
   default     = ""
+  
+  validation {
+    condition = var.ddc_admin_password == "" || alltrue([can(regex("[0-9]+", var.ddc_admin_password)), 
+                         can(regex("[A-Z]+", var.ddc_admin_password)), 
+                         can(regex("[a-z]+", var.ddc_admin_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.ddc_admin_password)),
+                         length(var.ddc_admin_password) >= 8])
+    error_message = "Variable ddc_admin_password must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
 
 variable "ddc_vm_size_sku" {
@@ -362,6 +388,15 @@ variable "mssql_admin_password" {
   sensitive   = true
 
   default = ""
+
+  validation {
+    condition = var.mssql_admin_password == "" || alltrue([can(regex("[0-9]+", var.mssql_admin_password)), 
+                         can(regex("[A-Z]+", var.mssql_admin_password)), 
+                         can(regex("[a-z]+", var.mssql_admin_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.mssql_admin_password)),
+                         length(var.mssql_admin_password) >= 8])
+    error_message = "Variable mssql_admin_password must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
 
 variable "mssql_vm_sku" {
@@ -386,6 +421,15 @@ variable "sql_connectivity_password" {
   description = "Password to connect to sql database"
   sensitive   = true
   default     = ""
+
+  validation {
+    condition = var.sql_connectivity_password == "" || alltrue([can(regex("[0-9]+", var.sql_connectivity_password)), 
+                         can(regex("[A-Z]+", var.sql_connectivity_password)), 
+                         can(regex("[a-z]+", var.sql_connectivity_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.sql_connectivity_password)),
+                         length(var.sql_connectivity_password) >= 8])
+    error_message = "Variable sql_connectivity_password must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
 
 ################################################################################
@@ -406,6 +450,15 @@ variable "storefront_password" {
   sensitive   = true
 
   default = ""
+
+  validation {
+    condition = var.storefront_password == "" || alltrue([can(regex("[0-9]+", var.storefront_password)), 
+                         can(regex("[A-Z]+", var.storefront_password)), 
+                         can(regex("[a-z]+", var.storefront_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.storefront_password)),
+                         length(var.storefront_password) >= 8])
+    error_message = "Variable storefront_password must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
 
 variable "storefront_vm_count" {
@@ -521,6 +574,15 @@ variable "director_password" {
   description = "Password for the director server"
   sensitive   = true
   default     = ""
+
+  validation {
+    condition = var.director_password == "" || alltrue([can(regex("[0-9]+", var.director_password)), 
+                         can(regex("[A-Z]+", var.director_password)), 
+                         can(regex("[a-z]+", var.director_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.director_password)),
+                         length(var.director_password) >= 8])
+    error_message = "Variable director_password must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
 
 variable "director_count" {
@@ -560,6 +622,15 @@ variable "webstudio_password" {
   description = "Password for the web studio server"
   sensitive   = true
   default     = ""
+
+  validation {
+    condition = var.webstudio_password == "" || alltrue([can(regex("[0-9]+", var.webstudio_password)), 
+                         can(regex("[A-Z]+", var.webstudio_password)), 
+                         can(regex("[a-z]+", var.webstudio_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.webstudio_password)),
+                         length(var.webstudio_password) >= 8])
+    error_message = "Variable webstudio_password must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
 
 variable "webstudio_count" {
@@ -620,4 +691,13 @@ variable "vda_password" {
   description = "Password for the VDA VM"
   sensitive   = true
   default     = ""
+
+  validation {
+    condition = var.vda_password == "" || alltrue([can(regex("[0-9]+", var.vda_password)), 
+                         can(regex("[A-Z]+", var.vda_password)), 
+                         can(regex("[a-z]+", var.vda_password)), 
+                         can(regex("[^0-9A-Za-z]+", var.vda_password)),
+                         length(var.vda_password) >= 8])
+    error_message = "Variable must satisfy the following conditions: 1. At least 8 characters; 2. At least 1 upper case letter; 3. At least 1 lower case letter; 4. At least 1 special character; 5. At least 1 numerical character."
+  }
 }
