@@ -32,7 +32,9 @@ param (
     [Parameter(Mandatory = $false)]
     [switch]$AutoApprove,
     [Parameter(ParameterSetName = "apply", Mandatory = $false)]
-    [switch]$HideSessionLaunchPassword
+    [switch]$HideSessionLaunchPassword,
+    [Parameter(Mandatory = $false)]
+    [bool]$PreserveAzureCredential = $false
 )
 
 function Test-EnvironmentSetup {
@@ -293,6 +295,13 @@ catch {
 finally {
     # Cleanup temp files
     Remove-Item -Path "$tmpDirectoryPath" -Recurse -Force -ErrorAction SilentlyContinue
+
+    if (-not $PreserveAzureCredential) {
+        Set-Content -path "$($workingDir)\azure.tfvars" -value $("azure_subscription_id = `"`"`n" + `
+        "azure_tenant_id       = `"`"`n" + `
+        "azure_client_id       = `"`"`n" + `
+        "azure_client_secret   = `"`"`n")
+    }
 
     # Restore environment variables
     $env:TF_LOG = $Original_TF_LOG
