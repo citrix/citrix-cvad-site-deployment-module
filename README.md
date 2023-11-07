@@ -19,9 +19,9 @@ The Site Deployment Module for Citrix® Virtual Apps and Desktops aims to provid
 > `./New-ActiveDirectoryAppRegistration.ps1 -AzureSubscriptionId <Your Azure Subscription Id> [-AzureTenantId <Your Azure Subscription Tenant Id>] [-AzureApplicationName <Your New Azure App Registration Name>]`
 
 4. Review `inputs.tfvars` and the default values in `\terraform\variables.tf` to make sure that the parameters are set to desired values
-5. Run the `Start-CvadDeployment.ps1` script with the optional `-AutoApprove` flag for skipping Terraform plan verification to complete the deployment
+5. Run the `Start-CvadDeployment.ps1` script with the optional `-AutoApprove` flag for skipping Terraform plan verification to complete the deployment. You may also add the `-PreserveAzureCredential` flag to save Azure credential in `azure.tfvars.json` file, if this flag is not specified, the Azure credential will be removed once the deployment completed.
 
-> `./Start-CvadDeployment.ps1 [-AutoApprove]`
+> `./Start-CvadDeployment.ps1 [-AutoApprove] [-PreserveAzureCredential]`
 
 ## Deployment Removal
 1. Make sure you are using the same environment that used for the deployment
@@ -32,7 +32,7 @@ The Site Deployment Module for Citrix® Virtual Apps and Desktops aims to provid
 
 1. Run the `Start-CvadDeployment.ps1` script with the `Destroy` flag for resource deletion. The optional `AutoApprove` flag can be added for skipping Terraform plan verification
 
-> `./Start-CvadDeployment.ps1 -Destroy [-AutoApprove]`
+> `./Start-CvadDeployment.ps1 -Destroy [-AutoApprove] [-PreserveAzureCredential]`
 
 # Attributions
 The code in this repository makes use of the following packages:

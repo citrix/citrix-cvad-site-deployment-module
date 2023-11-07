@@ -164,6 +164,7 @@ Set-Content -path "$($workingDir)\azure.tfvars" -value $("azure_subscription_id 
         "azure_client_id       = `"$($AzureADApplication.AppId)`"`n" + `
         "azure_client_secret   = `"$($cred.SecretText)`"`n")
 
+Write-Host "Please save the following Azure credentials in a safe location" -ForegroundColor Yellow
 Write-Host "azure_subscription_id = $($AzureSubscriptionId)"
 Write-Host "azure_client_id = $($AzureADApplication.AppId)"
 Write-Host "azure_tenant_id = $($tenantId)"
