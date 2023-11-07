@@ -15,11 +15,11 @@
     .PARAMETER AutoApprove
     Optional switch parameter to let user skip confirmation before deploying the terraform action plan.
 
-    .PARAMETER HideSessionLaunchPassword
-    Optional switch parameter for apply action to let the script hide session launch passwords in deployment summary 
+    .PARAMETER ShowSessionLaunchPassword
+    Optional switch parameter for apply action to let the script show session launch passwords in deployment summary 
 
     .EXAMPLE
-    PS> main.ps1 [-IncludeTerraform] [-Destroy] [-AutoApprove] [-HideSessionLaunchPassword]
+    PS> Start-CvadDeployment.ps1 [-IncludeTerraform] [-Destroy] [-AutoApprove] [-ShowSessionLaunchPassword]
 
 #>
 
@@ -32,7 +32,7 @@ param (
     [Parameter(Mandatory = $false)]
     [switch]$AutoApprove,
     [Parameter(ParameterSetName = "apply", Mandatory = $false)]
-    [switch]$HideSessionLaunchPassword,
+    [switch]$ShowSessionLaunchPassword,
     [Parameter(Mandatory = $false)]
     [bool]$PreserveAzureCredential = $false
 )
@@ -237,15 +237,13 @@ try {
     Write-Host "Initializing Terraform environment"
 
     $tfAction = "apply"
-    $hideSessionLaunchPasswordParsed = 0
+    $hideSessionLaunchPasswordParsed = 1
+    if ($ShowSessionLaunchPassword -and (-not $Destroy)){
+        $hideSessionLaunchPasswordParsed = 0
+    }
 
     if ($Destroy) {
         $tfAction = "destroy"
-        $hideSessionLaunchPasswordParsed = 1
-    }
-
-    if ($HideSessionLaunchPassword) {
-        $hideSessionLaunchPasswordParsed = 1
     }
 
     $tfAutoApproveArg = $null
