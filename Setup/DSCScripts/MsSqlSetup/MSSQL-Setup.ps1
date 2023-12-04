@@ -32,9 +32,7 @@ Configuration MSSQL-Setup {
 #>  
     param( 
         [Parameter(Mandatory = $true)]
-        [string] $tempDir,
-        [Parameter(Mandatory = $true)]
-        [string] $logFile,
+        [string] $CitrixModulesPath,
         [Parameter(Mandatory = $true)]
         [string] $DbServerInstanceName,
         [Parameter(Mandatory = $true)]
@@ -55,6 +53,8 @@ Configuration MSSQL-Setup {
     
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
 
+    $logFilePath = "$($CitrixModulesPath)\CVAD_Installation.log"
+
     Node localhost
     {
  
@@ -66,19 +66,18 @@ Configuration MSSQL-Setup {
             ConfigurationMode  = "ApplyOnly"
         }
     
-        Script SetupTempDir {
+        Script SetupCitrixModules {
             GetScript  = {
             }
 
             SetScript  = {
-                New-Item -ItemType "File" -Path $using:logFile -Force
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Creating temp folder..."
-                New-Item -ItemType "directory" -Path $using:tempDir -Force
+                New-Item -ItemType "Directory" -Path $using:CitrixModulesPath -Force
+                New-Item -ItemType "File" -Path $using:logFilePath -Force
             }
 
             TestScript = {
                 try {
-                    Test-Path -Path $using:logFile
+                    Test-Path -Path $using:logFilePath
                 }
                 catch {
                     return $false
@@ -88,7 +87,7 @@ Configuration MSSQL-Setup {
 
         #region Make the AD Domain Controller discoverable on VNet and Domain
         Script EnableNetworkDiscovery {
-            DependsOn            = "[Script]SetupTempDir"
+            DependsOn            = "[Script]SetupCitrixModules"
             GetScript  = {
             }
     
@@ -139,28 +138,28 @@ Configuration MSSQL-Setup {
 
             SetScript  = {
                 # Domain Join Credential Setup
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Try setup AD Join credential"
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Try setup AD Join credential"
                 $adCred = New-Object pscredential -ArgumentList ([pscustomobject]@{
                         UserName = "$using:AdDomainFQDN\$using:AdDomainAdminName"
-                        Password = (ConvertTo-SecureString $using:AdDomainAdminPassword -AsPlainText -Force)[0]
+                        Password = (ConvertTo-SecureString "$($using:AdDomainAdminPassword)" -AsPlainText -Force)[0]
                     })
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Try AD Join "
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Try AD Join "
                 Add-Computer -DomainName $using:AdDomainFQDN -Credential $adCred
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Finished AD Join "
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Finished AD Join "
                 Restart-Computer -Force
             }
 
             TestScript = {
                 # Check if computer is AD Joined
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Test AD Join $using:AdDomainFQDN"
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Test AD Join $using:AdDomainFQDN"
                 try {
                     Test-ComputerSecureChannel -Server $using:AdDomainFQDN
                 }
                 catch {
-                    Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Failed AD Join Test"
+                    Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Failed AD Join Test"
                     return $false
                 }
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Finished AD Join Test"
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Finished AD Join Test"
             }	
             
         }
@@ -175,10 +174,10 @@ Configuration MSSQL-Setup {
                 # For SQL EXPRESS, display name is "SQL SERVER (SQLEXPRESS)".  For SQL 2012 is "SQL SERVER (MSSQLSERVER)"
                 $sqlservice = Get-Service -DisplayName "SQL Server (MSSQLSERVER)"
 
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Stopping the SQL Service: $sqlservice"
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Stopping the SQL Service: $sqlservice"
                 net stop $sqlservice /y
 
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Starting the SQL Service: $sqlservice"
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Starting the SQL Service: $sqlservice"
                 net start $sqlservice /y
             }
             TestScript = {
@@ -187,9 +186,9 @@ Configuration MSSQL-Setup {
                     $sqlpsFullPath = Join-Path ${ENV:ProgramFiles(x86)} "Microsoft SQL Server\100\Tools\binn"
                     $SqlpsCommand = "$sqlpsFullPath\sqlps.exe"
                     if (-not (Test-Path $SqlpsCommand)) {
-                        Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Searching for sqlpscmd in folder `'$(join-path ${ENV:ProgramFiles(x86)} 'Microsoft SQL Server')`'..."
+                        Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Searching for sqlpscmd in folder `'$(join-path ${ENV:ProgramFiles(x86)} 'Microsoft SQL Server')`'..."
                         $SqlpsCommand = @(ls (join-path ${ENV:ProgramFiles(x86)} "Microsoft SQL Server") -include 'sqlps.exe' -recurse)[0].FullName
-                        Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Sql Database command: $SqlpsCommand"
+                        Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Sql Database command: $SqlpsCommand"
                         if (-not (Test-Path $SqlpsCommand)) {
                             Throw "SQLPS tool is not found"
                         }
@@ -203,25 +202,25 @@ Configuration MSSQL-Setup {
             
                     # calculate computer name - this script will only run on this machine
                     $machine = $env:Computername
-                    Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Computer name: $($machine)"
+                    Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Computer name: $($machine)"
 
                     #Enable tcp
                     $uri = "ManagedComputer[@Name='$machine']/ServerInstance[@Name='MSSQLSERVER']/ServerProtocol[@Name='Tcp']"
                 
                     $tcp = $wmi.GetSmoObject($uri)
                     if ($tcp.IsEnabled) {
-                        Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') TCP is enabled"
+                        Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') TCP is enabled"
                         return $true
                     }
                     else {
-                        Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Remote Access to DataBase Required, Enabling TCP..."
+                        Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Remote Access to DataBase Required, Enabling TCP..."
                         $tcp.IsEnabled = $true
                         $tcp.Alter()
                         return $false
                     }
                 }
                 catch {
-                    Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') EnableRemoteAccessDB fail"
+                    Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') EnableRemoteAccessDB fail"
                     return $false
                 }
             }
@@ -241,7 +240,7 @@ Configuration MSSQL-Setup {
                     Invoke-SqlCmd -ServerInstance $using:DbServerInstanceName -Query $query -Username $using:SqlAdminUsername -Password $using:SqlAdminPassword
                 }
                 catch {
-                    Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') AD Admin creation failure"
+                    Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') AD Admin creation failure"
                 }
             }
 
@@ -253,20 +252,20 @@ Configuration MSSQL-Setup {
                 $res = @(Get-Childitem -Recurse -Path $searchPath -Include @('microsoft.sqlserver.management.pssnapins.dll', 'Microsoft.SqlServer.Management.PSProvider.dll'))
                 if ($null -ne $res) {
                     $res | ForEach-Object {
-                        Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Importing $_"
+                        Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Importing $_"
                         Import-Module -Name $_.FullName
                     }
                 }
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Loading SQL Server Module"
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') Loading SQL Server Module"
                 
                 #Test if AD Admin is already exist
                 $smo = New-Object Microsoft.SqlServer.Management.Smo.Server $env:ComputerName
                 if (($smo.logins).Name -contains "$using:AdNetBIOSName\$using:AdDomainAdminName") {
-                    Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') AD Admin already exist"
+                    Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') AD Admin already exist"
                     $true
                 }
                 else {
-                    Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') AD Admin does not exist, start creating"
+                    Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') AD Admin does not exist, start creating"
                     $false
                 }
             }
@@ -289,17 +288,17 @@ Configuration MSSQL-Setup {
                     $query = "ALTER SERVER ROLE $_ ADD MEMBER [$using:AdNetBIOSName\$using:AdDomainAdminName];"
                     Invoke-SqlCmd -ServerInstance $using:DbServerInstanceName -Query $query -Username $using:SqlAdminUsername -Password $using:SqlAdminPassword
                 }
-                Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') AD Admin created"
+                Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') AD Admin created"
             }
             TestScript = {
                 $query = "SELECT IS_SRVROLEMEMBER ('dbcreator', '$using:AdNetBIOSName\$using:AdDomainAdminName') + IS_SRVROLEMEMBER ('dbcreator', '$using:AdNetBIOSName\$using:AdDomainAdminName')"
                 $roleNum = Invoke-SqlCmd -ServerInstance $using:DbServerInstanceName -Query $query -Username $using:SqlAdminUsername -Password $using:SqlAdminPassword
                 if ($roleNum -eq 2) {
-                    Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K')Server Roles dbcreator and securityadmin added compeletely"
+                    Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K')Server Roles dbcreator and securityadmin added compeletely"
                     return $true
                 }
                 else {
-                    Add-content $using:logFile -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K')Server Roles not added compeletely"
+                    Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K')Server Roles not added compeletely"
                     return $false
                 }
             }
@@ -308,7 +307,7 @@ Configuration MSSQL-Setup {
 
         File MsSqlInstallCleanup {
             DependsOn       = '[Script]AddADAdminForDB'
-            DestinationPath = $tempDir
+            DestinationPath = $CitrixModulesPath
             Type            = "Directory"
             Ensure          = "Absent"
             Force           = $true
