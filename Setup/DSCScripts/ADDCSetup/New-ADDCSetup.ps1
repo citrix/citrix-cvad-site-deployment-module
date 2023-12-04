@@ -58,7 +58,7 @@ Configuration New-ADDCSetup {
 
     $ADCredentials = New-Object pscredential -ArgumentList ([pscustomobject]@{
             UserName = "$ADDomainFQDN\$ADDomainUsername"
-            Password = (ConvertTo-SecureString $AdDomainAdminPassword -AsPlainText -Force)[0]
+            Password = (ConvertTo-SecureString "$($AdDomainAdminPassword)" -AsPlainText -Force)[0]
         })
     
     Node localhost {
@@ -141,7 +141,7 @@ Configuration New-ADDCSetup {
     
             SetScript  = {
                 Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') [Set-SetupAdDomain] Setting up Active Directory Domain Service Forest."
-                Install-ADDSForest -SkipPreChecks -DomainName $using:AdDomainFQDN -InstallDNS -Force -SafeModeAdministratorPassword (ConvertTo-SecureString $using:AdDomainAdminPassword -AsPlainText -Force)[0]
+                Install-ADDSForest -SkipPreChecks -DomainName $using:AdDomainFQDN -InstallDNS -Force -SafeModeAdministratorPassword (ConvertTo-SecureString "$($using:AdDomainAdminPassword)" -AsPlainText -Force)[0]
                 Restart-Computer -Force
                 # Add 120 seconds padding to complete restart
                 Start-Sleep 120
@@ -243,7 +243,7 @@ Configuration New-ADDCSetup {
     
             SetScript            = {
                 Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') [Set-AddDomainUsers] Creating new users in the Active Directory Domain."
-                1..10 | ForEach-Object { $_.ToString().Padleft(4, '0') } | ForEach-Object { New-ADUser -Name "user$_" -ChangePasswordAtLogon $false -Enabled $true -PasswordNeverExpires $true -AccountPassword (ConvertTo-SecureString $using:AdDefaultUserPassword -AsPlainText -Force) -UserPrincipalName "user$($_)@$($using:AdDomainFQDN)" }
+                1..10 | ForEach-Object { $_.ToString().Padleft(4, '0') } | ForEach-Object { New-ADUser -Name "user$_" -ChangePasswordAtLogon $false -Enabled $true -PasswordNeverExpires $true -AccountPassword (ConvertTo-SecureString "$($using:AdDefaultUserPassword)" -AsPlainText -Force) -UserPrincipalName "user$($_)@$($using:AdDomainFQDN)" }
             }
     
             TestScript           = {

@@ -1,0 +1,50 @@
+{
+    "active_directory_domain_name": "ctx-ad.local",
+
+    "ddc_machine_name": "ctx-ddc",
+    "ddc_cvad_components": "CONTROLLER,DESKTOPSTUDIO,WEBSTUDIO,DESKTOPDIRECTOR,LICENSESERVER",
+    
+    "cvad_component_resource_group_name": "ctx-resource-group",
+    "vda_resource_group_name": "ctx-vda-resource-group",
+    
+    "is_cvad_installer_stored_locally": true,
+    "cvad_installer_iso_file_path": "",
+    "cvad_installer_iso_file_md5": "",
+    
+    "license_file_path": "",
+    "catalog_session_support": "MultiSession",
+    
+    "setup_independent_sql_vm": false,
+    "mssql_machine_name": "ctx-mssql",
+
+    "setup_independent_license_server": false,
+    "license_server_machine_name": "ctx-licensing",
+
+    "storefront_vm_count": 0,
+    "storefront_machine_name": "ctx-storefront",
+
+    "webstudio_count": 0,
+    "webstudio_machine_name": "ctx-webstudio",
+
+    "director_count": 0,
+    "director_machine_name": "ctx-director",
+
+    "vda_machine_count": 3,
+    
+	"vda_image_container_name": "vda-images",
+    "destination_vda_image_name": "ctx-vda.vhd",
+    "vda_image_source_link": "ADD_YOUR_VDA_VHD_LINK_HERE",
+    "vda_hyper_v_generation": "V1",
+
+    "vda_zone_name": "ctx-test-zone",
+    "vda_zone_description": "ctx-zone-description",
+    "vda_vm_size": "Standard_D2as_v5",
+    "vda_machine_naming_scheme": "ctx-vda###",
+    "vda_machine_naming_scheme_type": "Numeric",
+    "delivery_group_name": "ctx-delivery-group",
+    "desktop_user_upns": [
+        "user0001@ctx-ad.local",
+        "advmadmin@ctx-ad.local"
+    ],
+    "setup_script_container_name": "setupscripts"
+}

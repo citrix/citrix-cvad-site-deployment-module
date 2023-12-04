@@ -29,10 +29,11 @@ desktop.ini
 **.zip
 
 # Ignore deployment summary files
-DeploymentSummary.log
+DeploymentSummary.md
 DeploymentSummary.json
 
 # Ignore Terraform variable user inputs
-azure.tfvars
-inputs.tfvars
+*.tfvars.json
 
+# Local temp files
+/tmp
