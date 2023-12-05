@@ -1,3 +1,4 @@
+# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
 [CmdletBinding()]
 param (
     [Parameter(Mandatory=$true)]

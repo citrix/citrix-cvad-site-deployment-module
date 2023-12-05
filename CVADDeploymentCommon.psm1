@@ -1,3 +1,4 @@
+# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
 function Add-DDCManagementInfoToGeneratedTfVarsFile {
     [CmdletBinding()]
     param (
