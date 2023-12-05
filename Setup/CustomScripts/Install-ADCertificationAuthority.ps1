@@ -1,3 +1,4 @@
+# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
 <#
     .Synopsis
         Installs Active Directory Certificate Services role on local computer.

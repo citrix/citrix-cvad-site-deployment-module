@@ -1,4 +1,5 @@
-﻿<#
+﻿# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
+<#
 .SYNOPSIS
     Enable the TLS/DTLS listeners on the VDA
 
