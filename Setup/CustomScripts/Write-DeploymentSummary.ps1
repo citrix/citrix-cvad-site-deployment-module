@@ -1,4 +1,4 @@
-# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
+﻿# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
 [CmdletBinding()]
 param (
     [Parameter(Mandatory=$true)]
@@ -96,6 +96,6 @@ try {
         "`n`n") -Force
 }
 catch {
-    Write-Host "$_"
+    Write-Output "$_"
     continue
 }

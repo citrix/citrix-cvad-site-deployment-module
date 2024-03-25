@@ -1,4 +1,4 @@
-# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
+﻿# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
 function Add-DDCManagementInfoToGeneratedTfVarsFile {
     [CmdletBinding()]
     param (
@@ -233,17 +233,17 @@ function Install-AzModule {
         $retryCount = 0
         while ($retryCount -lt 3) {
             try {
-                Write-Host "Attempting to install Az PowerShell module, retry count: $retryCount"
+                Write-Output "Attempting to install Az PowerShell module, retry count: $retryCount"
                 Remove-Module Az*
                 Install-Module -Name Az -Repository PSGallery -Force -ErrorAction Stop
                 Uninstall-AzureRM -ErrorAction Stop
             }
             catch {
-                Write-Host "Failed to install Az module, increasing retry count" -ForegroundColor Yellow
+                Write-Output "Failed to install Az module, increasing retry count" -ForegroundColor Yellow
                 $retryCount++
             }
             if ($retryCount -eq 3) {
-                Write-Host "Failed to install Az PowerShell module after 3 retries" -ForegroundColor Red
+                Write-Output "Failed to install Az PowerShell module after 3 retries" -ForegroundColor Red
                 exit 1
             }
         }
@@ -255,30 +255,30 @@ function Install-Terraform {
     $isTerraformInstalled = Get-Command -Name terraform -ErrorAction SilentlyContinue
     $isChocoInstalled = Get-Command -Name choco -ErrorAction SilentlyContinue
     if ((-not $isTerraformInstalled) -and (-not $isChocoInstalled)) {
-        Write-Host "Installing Chocolatey"
+        Write-Output "Installing Chocolatey"
         Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-        Write-Host "Chocolatey installed"
+        Write-Output "Chocolatey installed"
     }
     else {
-        Write-Host "Chocolatey already installed"
+        Write-Output "Chocolatey already installed"
     }
 
     # Install Terraform with Chocolatey
     if (-not $isTerraformInstalled) {
-        Write-Host "Installing Terraform"
+        Write-Output "Installing Terraform"
         choco install terraform -y
-        Write-Host "Terraform installed"
+        Write-Output "Terraform installed"
     }
     else {
-        Write-Host "Terraform already installed"
+        Write-Output "Terraform already installed"
     }
 
-    Write-Host "Upgrading Chocolatey to latest version"
+    Write-Output "Upgrading Chocolatey to latest version"
     choco upgrade chocolatey -fy
-    Write-Host "Upgraded Chocolatey to latest version"
-    Write-Host "Upgrading Terraform to latest version"
+    Write-Output "Upgraded Chocolatey to latest version"
+    Write-Output "Upgrading Terraform to latest version"
     choco upgrade terraform -fy
-    Write-Host "Upgraded Terraform to latest version"
+    Write-Output "Upgraded Terraform to latest version"
 }
 
 function Read-AzureConfigStringValue {
@@ -292,7 +292,7 @@ function Read-AzureConfigStringValue {
     )
 
     if ([string]::IsNullOrEmpty($ConfigStringValue)) {
-        Write-Host "Variable $($ConfigStringPropertyName) in azure.tfvars.json cannot be null or empty" -ForegroundColor Red
+        Write-Output "Variable $($ConfigStringPropertyName) in azure.tfvars.json cannot be null or empty" -ForegroundColor Red
         return $false
     }
     return $true
@@ -370,18 +370,18 @@ function Show-DeploymentSummary {
     $deploymentSummary = Get-Content "$($WorkingDirectory)\DeploymentSummary.md" -Raw -ErrorAction SilentlyContinue
 
     Write-Warning "Please record all the information below before exiting this window`n"
-    Write-Host $($deploymentSummary.Replace("``````", ""))
-    Write-Host
+    Write-Output $($deploymentSummary.Replace("``````", ""))
+    Write-Output
 }
 
 function Test-AzModuleEnvironment {
     $installedAzModule = Get-InstalledModule -Name Az -ErrorAction SilentlyContinue
     if (-not $installedAzModule) {
-        Write-Host "Az module not found, please install Az Powershell Module v9.0.0 or higher." -ForegroundColor Red
+        Write-Output "Az module not found, please install Az Powershell Module v9.0.0 or higher." -ForegroundColor Red
         exit 1
     }
     elseif (([Version]$installedAzModule.Version).Major -lt 9) {
-        Write-Host "Local Az PowerShell module has version $($installedAzModule.Version), please upgrade it to v9.0.0 or higher." -ForegroundColor Red
+        Write-Output "Local Az PowerShell module has version $($installedAzModule.Version), please upgrade it to v9.0.0 or higher." -ForegroundColor Red
         exit 1
     }
 }
@@ -400,7 +400,7 @@ function Test-AzureAppRegistrationCreation {
         [String] $azure_subscription_id
     )
 
-    Write-Host "Waiting for App Registration creation to be finalized on Azure..."
+    Write-Output "Waiting for App Registration creation to be finalized on Azure..."
 
     $retryCount = 0
     $maxRetryCount = 5
@@ -417,15 +417,15 @@ function Test-AzureAppRegistrationCreation {
             break
         }
         catch {
-            Write-Host "App Registration creation is not finalized yet on Azure..."
+            Write-Output "App Registration creation is not finalized yet on Azure..."
             $retryCount++
             if ($retryCount -eq $maxRetryCount) {
-                Write-Host "Failed to create App Registration in Azure subscription $($azure_subscription_id) with tenant $($azure_tenant_id): $($_)`n" -ForegroundColor Red
+                Write-Output "Failed to create App Registration in Azure subscription $($azure_subscription_id) with tenant $($azure_tenant_id): $($_)`n" -ForegroundColor Red
                 exit 1
             }
         }
     }
-    Write-Host "`nApp Registration creation is finalized on Azure...`n" -ForegroundColor Green
+    Write-Output "`nApp Registration creation is finalized on Azure...`n" -ForegroundColor Green
 }
 
 function Test-AzureConfig {
@@ -449,7 +449,7 @@ function Test-AzureConfig {
     $isClientSecretValid = Read-AzureConfigStringValue -ConfigStringValue $azureClientSecret -ConfigStringPropertyName "azure_client_secret"
     
     if (-not ($isSubscriptionIdValid -and $isTenantIdValid -and $isClientIdValid -and $isClientSecretValid)) {
-        Write-Host "Please ensure the Azure credentials are up to date in .\azure.tfvars.json file" -ForegroundColor Yellow
+        Write-Output "Please ensure the Azure credentials are up to date in .\azure.tfvars.json file" -ForegroundColor Yellow
         exit 1
     }
 }
@@ -467,7 +467,7 @@ function Test-PowerShellEnvironment {
         }
     }
     catch {
-        Write-Host $_.Exception.Message -ForegroundColor Red
+        Write-Output $_.Exception.Message -ForegroundColor Red
         exit
     }
 }
@@ -475,14 +475,14 @@ function Test-PowerShellEnvironment {
 function Test-TerraformEnvironment {
     $terraformCmd = Get-Command -Name terraform -ErrorAction SilentlyContinue
     if (-not $terraformCmd) {
-        Write-Host "Terraform cannot be found, please install terraform with version 1.1.0 or higher." -ForegroundColor Red
+        Write-Output "Terraform cannot be found, please install terraform with version 1.1.0 or higher." -ForegroundColor Red
         exit 1
     }
     else {
         $tfVersionJson = ConvertFrom-Json ([string](terraform -version -json))
         $tfVersion = [version]$tfVersionJson.terraform_version
         if (($tfVersion.Major -lt 1) -or ($tfVersion.Minor -lt 1)) {
-            Write-Host "The local Terraform has version $($tfVersionJson.terraform_version), please install terraform with version 1.1.0 or higher." -ForegroundColor Red
+            Write-Output "The local Terraform has version $($tfVersionJson.terraform_version), please install terraform with version 1.1.0 or higher." -ForegroundColor Red
             exit 1
         }
     }
