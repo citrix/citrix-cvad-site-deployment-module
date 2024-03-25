@@ -230,7 +230,7 @@ switch ($SSLMinVersion) {
         $osVersion = $osVersion.trim()
         $buildNum = [int]$osVersion.Split(".")[2]
         if ($buildNum -lt 20348) {
-            Write-Host "Enabling SSL to VDA failed. TLS 1.3 is only supported in Windows 2k22 / Windows 11 and above."
+            Write-Output "Enabling SSL to VDA failed. TLS 1.3 is only supported in Windows 2k22 / Windows 11 and above."
             $Store.Close()
             Exit
         }

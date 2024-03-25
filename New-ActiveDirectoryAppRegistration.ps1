@@ -1,4 +1,4 @@
-# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
+﻿# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
 <#
 
     .SYNOPSIS
@@ -60,7 +60,7 @@ try {
 
     Test-AzModuleEnvironment
 
-    Write-Host "Connecting to user Azure account..."
+    Write-Output "Connecting to user Azure account..."
     if ($AzureTenantId -and $ApplicationId -and $ApplicationPassword) {
         $SecurePassword = ConvertTo-SecureString -String "$($ApplicationPassword)" -AsPlainText -Force
         $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $ApplicationId, $SecurePassword
@@ -76,7 +76,7 @@ try {
     }
     $tenantId = (Get-AzSubscription -SubscriptionId $AzureSubscriptionId).TenantId
     
-    Write-Host "Creating Azure Active Directory Application in subscription $($AzureSubscriptionId)"
+    Write-Output "Creating Azure Active Directory Application in subscription $($AzureSubscriptionId)"
     $AzureADApplication = New-AzADApplication -DisplayName $AzureApplicationName -ErrorAction Stop
     New-AzADServicePrincipal -ApplicationId $AzureADApplication.AppId -ErrorAction Stop | Out-Null
     New-AzRoleAssignment -RoleDefinitionName Contributor -ApplicationId $AzureADApplication.AppId -ErrorAction Stop | Out-Null
@@ -95,14 +95,14 @@ try {
     
     Set-Content -path "$($workingDir)\azure.tfvars.json" -value $azureConfigJson -Force
     
-    Write-Host "Please save the following Azure credentials in a safe location" -ForegroundColor Yellow
-    Write-Host "azure_subscription_id = $($AzureSubscriptionId)"
-    Write-Host "azure_client_id = $($AzureADApplication.AppId)"
-    Write-Host "azure_tenant_id = $($tenantId)"
-    Write-Host "azure_client_secret = $($cred.SecretText)`n"
+    Write-Output "Please save the following Azure credentials in a safe location" -ForegroundColor Yellow
+    Write-Output "azure_subscription_id = $($AzureSubscriptionId)"
+    Write-Output "azure_client_id = $($AzureADApplication.AppId)"
+    Write-Output "azure_tenant_id = $($tenantId)"
+    Write-Output "azure_client_secret = $($cred.SecretText)`n"
     
-    Write-Host "Azure configurations are added to azure.tfvars.json file`n" -ForegroundColor Green
-    Write-Host "If you have any license file, please make sure its path and the corresponding DDC host name is referenced in inputs.tfvars.json file, after which you can deploy with the New-CvadDeployment.ps1 script`n" -ForegroundColor Yellow
+    Write-Output "Azure configurations are added to azure.tfvars.json file`n" -ForegroundColor Green
+    Write-Output "If you have any license file, please make sure its path and the corresponding DDC host name is referenced in inputs.tfvars.json file, after which you can deploy with the New-CvadDeployment.ps1 script`n" -ForegroundColor Yellow
 }
 finally {
     if (Get-Module CVADDeploymentCommon) {

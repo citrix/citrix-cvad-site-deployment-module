@@ -1,4 +1,4 @@
-# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
+﻿# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
 <#
 .SYNOPSIS
     Enable HDX SSL on DeliveryGroups

@@ -1,4 +1,4 @@
-# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
+﻿# Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.
 <#
 
     .SYNOPSIS
@@ -79,7 +79,7 @@ try {
     Test-AzureConfig -WorkingDirectory $workingDir
 
     # Navigate to vnet, advm, and ddc setup section
-    Write-Host "Navigate directory to VNet, AD VM, and DDC terraform workspace"
+    Write-Output "Navigate directory to VNet, AD VM, and DDC terraform workspace"
 
     if ($IncludeTerraform) {
         Install-Terraform
@@ -89,7 +89,7 @@ try {
 
     # Run terraform script
     # Make sure terraform app reg is assigned with Contributor role
-    Write-Host "Initializing Terraform environment"
+    Write-Output "Initializing Terraform environment"
 
     $tfAutoApproveArg = $null
     if ($AutoApprove) {
@@ -112,7 +112,7 @@ try {
     $stageMarkerJson = Get-Content $stageMarkerFilePath -Raw | ConvertFrom-Json
 
     if (-not $stageMarkerJson.provisioning) {
-        Write-Host "Failed to deploy CVAD Site, aborting ..." -ForegroundColor Red
+        Write-Output "Failed to deploy CVAD Site, aborting ..." -ForegroundColor Red
         return
     }
     # Perform Terraform Actions on Site Management Module
@@ -121,7 +121,7 @@ try {
 
     $stageMarkerJson = Get-Content $stageMarkerFilePath -Raw | ConvertFrom-Json
     if (-not $stageMarkerJson.management) {
-        Write-Host "Failed to create machine catalog and delivery group, aborting ..." -ForegroundColor Red
+        Write-Output "Failed to create machine catalog and delivery group, aborting ..." -ForegroundColor Red
         return
     }
 
@@ -130,7 +130,7 @@ try {
 
     $stageMarkerJson = Get-Content $stageMarkerFilePath -Raw | ConvertFrom-Json
     if (-not $stageMarkerJson.vda_ssl) {
-        Write-Host "Failed to enable SSL for VDAs, aborting ..." -ForegroundColor Red
+        Write-Output "Failed to enable SSL for VDAs, aborting ..." -ForegroundColor Red
         return
     }
 
@@ -146,7 +146,7 @@ try {
     Show-DeploymentSummary -WorkingDirectory $workingDir
 }
 catch {
-    Write-Host "Execution of New-CvadDeployment.ps1 failed: $($_)"
+    Write-Output "Execution of New-CvadDeployment.ps1 failed: $($_)"
     throw
 }
 finally {
@@ -164,7 +164,7 @@ finally {
     }
 
     # Navigate back to user's starting location
-    Write-Host "Navigate back to starting location"
+    Write-Output "Navigate back to starting location"
     Set-Location $startingLocation
 
     if (Get-Module CVADDeploymentCommon) {

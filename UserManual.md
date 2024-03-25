@@ -1,4 +1,4 @@
-# User Manual for Site Deployment Module for Citrix® Virtual Apps and Desktops
+﻿# User Manual for Site Deployment Module for Citrix® Virtual Apps and Desktops
 
 ## Table of Contents
   - [Scope](#scope)
