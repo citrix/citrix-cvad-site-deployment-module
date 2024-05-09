@@ -14,7 +14,7 @@ terraform {
 
     citrix = {
       source  = "citrix/citrix"
-      version = "=0.3.3"
+      version = "=0.5.5"
     }
 
     local = {

@@ -263,12 +263,6 @@ variable "delivery_group_name" {
   description = "Name of the delivery group where Virtual Delivery Agents (VDAs) will be added to."
 }
 
-variable "desktop_user_upns" {
-  type = list(string)
-  description = "UPNs of the Users to be added to each delivery group"
-  default = []
-}
-
 ################################################################################
 #                                                                              #  
 #                    Virtual Delivery Agent Image Settings                     #
