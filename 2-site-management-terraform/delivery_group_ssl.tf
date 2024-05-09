@@ -19,6 +19,6 @@ resource "azurerm_virtual_machine_extension" "set_delivery_group_ssl" {
   SETTINGS
 
   depends_on = [ 
-    citrix_daas_delivery_group.onprem_delivery_group
+    citrix_delivery_group.onprem_delivery_group
    ]
 }

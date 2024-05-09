@@ -27,13 +27,13 @@ data "azurerm_storage_blob" "dsc_configuration_script_data" {
   storage_container_name = var.setup_script_container_name
 }
 
-data "citrix_daas_vda" "vdas_in_delivery_group" {
+data "citrix_vda" "vdas_in_delivery_group" {
   delivery_group = var.delivery_group_name
 }
 
 data "azurerm_virtual_machine" "vdas_to_enable_ssl" {
     for_each = toset([
-        for vda in data.citrix_daas_vda.vdas_in_delivery_group.vdas:
+        for vda in data.citrix_vda.vdas_in_delivery_group.vdas:
             vda.hosted_machine_id
     ])
     name                = split("/", each.value)[1]

@@ -42,9 +42,5 @@
     "vda_machine_naming_scheme": "ctx-vda###",
     "vda_machine_naming_scheme_type": "Numeric",
     "delivery_group_name": "ctx-delivery-group",
-    "desktop_user_upns": [
-        "user0001@ctx-ad.local",
-        "advmadmin@ctx-ad.local"
-    ],
     "setup_script_container_name": "setupscripts"
 }
