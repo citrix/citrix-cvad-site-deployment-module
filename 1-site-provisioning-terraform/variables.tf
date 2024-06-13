@@ -6,7 +6,7 @@
 
 variable "local_temp_file_dir" {
   type        = string
-  description = "Subscription to place the resources in."
+  description = "Directory to place the resources in."
   default     = "../tmp/"
 }
 
