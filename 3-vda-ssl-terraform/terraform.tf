@@ -35,6 +35,8 @@ provider "azurerm" {
   client_secret   = var.azure_client_secret
   tenant_id       = var.azure_tenant_id
   environment     = var.azure_environment
+
+  partner_id = "2b3681fa-6d91-4bcf-888c-7eebdf549d48"
   features { }
 }
 
