@@ -371,7 +371,6 @@ function Show-DeploymentSummary {
 
     Write-Warning "Please record all the information below before exiting this window`n"
     Write-Output $($deploymentSummary.Replace("``````", ""))
-    Write-Output
 }
 
 function Test-AzModuleEnvironment {
