@@ -139,7 +139,7 @@ Under `inputs.tfvars.json` file
 
 ### 1. Requirements:
 
--  The customer needs to make sure `Terraform` with version `1.1.0` or higher is installed in their environment. This can be checked with command:
+-  The customer needs to make sure `Terraform` with version `1.4.0` or higher is installed in their environment. This can be checked with command:
     > `terraform -version`
   
      - If `Terraform` has not been installed, you may follow the two methods below to install `Terraform` as a requirement:

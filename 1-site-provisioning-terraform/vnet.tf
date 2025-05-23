@@ -64,7 +64,6 @@ resource "azurerm_network_security_rule" "storefront_inbound_rules" {
 }
 
 resource "azurerm_network_security_rule" "webstudio_inbound_rules" {
-  count                       = var.webstudio_count
   name                        = "webstudio-inbound-rules"
   priority                    = 102
   direction                   = "Inbound"
