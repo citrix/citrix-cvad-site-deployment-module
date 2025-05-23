@@ -4,7 +4,7 @@ The Site Deployment Module for Citrix® Virtual Apps and Desktops aims to provid
 ## Environment Requirement
 1. PowerShell with version `5.0` or higher
 2. PowerShell `Az` module with version `9.0.0` or higher
-3. Terraform with version `1.1.0` or higher
+3. Terraform with version `1.4.0` or higher
 
 ## Deployment
 1. Make a copy of the `azure.tfvars.json.example` and the `inputs.tfvars.json.example` files. Then rename the new files to `azure.tfvars.json` and `inputs.tfvars.json` respectively
@@ -36,6 +36,13 @@ The Site Deployment Module for Citrix® Virtual Apps and Desktops aims to provid
 
 > `./Remove-CvadDeployment.ps1 [-AutoApprove] [-PreserveAzureCredential]`
 
+# Related Citrix Automation Repositories
+|            Title            |            Details            |
+|-----------------------------|-------------------------------|
+| [Plugin for Terraform Provider for Citrix®](https://github.com/citrix/terraform-provider-citrix) | Terraform provider plugin to manage Citrix products including CVAD, DaaS, StoreFront, and WEM via Terraform IaC. |
+| [Packer Image Management Module for Citrix® Virtual Apps and Desktops](https://github.com/citrix/citrix-packer-tools) | Use Packer to create golden images with the Citrix VDA installed and using Citrix best practices. |
+| [Citrix Ansible Tools](https://github.com/citrix/citrix-ansible-tools) | Playbooks to install Citrix components using automation such as the VDA. |
+
 # Attributions
 The code in this repository makes use of the following packages:
 - Hashicorp Terraform (https://github.com/hashicorp/terraform)
@@ -45,10 +52,9 @@ The code in this repository makes use of the following packages:
 - Terraform Provider: Local (https://github.com/hashicorp/terraform-provider-local)
 - Terraform Provider Random (https://github.com/hashicorp/terraform-provider-random)
 
-
 # License 
 This project is Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-<sub>Copyright © 2023. Citrix Systems, Inc. All Rights Reserved.</sub>
+<sub>Copyright © 2025. Citrix Systems, Inc. All Rights Reserved.</sub>

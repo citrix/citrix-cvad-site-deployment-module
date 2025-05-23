@@ -4,8 +4,6 @@ resource "citrix_machine_catalog" "onprem_catalog" {
     zone                        = citrix_zone.azure_zone.id
     allocation_type             = var.machine_allocation_type
     session_support             = var.catalog_session_support
-    is_power_managed            = true
-    is_remote_pc                = false
     provisioning_type           = "MCS"
     minimum_functional_level    = "L7_20"
     provisioning_scheme         =   {

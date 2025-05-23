@@ -15,6 +15,5 @@ resource "citrix_delivery_group" "onprem_delivery_group" {
             enabled = true
             enable_session_roaming = false
         }
-
     ] 
 }
