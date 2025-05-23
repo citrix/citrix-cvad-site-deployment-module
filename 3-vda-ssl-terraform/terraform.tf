@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.1.0"
+  required_version = ">= 1.4.0"
 
   required_providers {
     archive = {
@@ -14,7 +14,7 @@ terraform {
 
     citrix = {
       source  = "citrix/citrix"
-      version = "=0.5.5"
+      version = ">=1.0.18"
     }
 
     local = {
@@ -41,8 +41,10 @@ provider "azurerm" {
 }
 
 provider "citrix" {
-  hostname                    = data.azurerm_virtual_machine.ddc.public_ip_address
-  client_id                   = "${var.active_directory_domain_name}\\${var.advm_admin_username}"
-  client_secret               = var.advm_admin_password
-  disable_ssl_verification    = true
+  cvad_config = {
+    hostname                    = data.azurerm_virtual_machine.ddc.public_ip_address
+    client_id                   = "${var.active_directory_domain_name}\\${var.advm_admin_username}"
+    client_secret               = var.advm_admin_password
+    disable_ssl_verification    = true
+  }
 }

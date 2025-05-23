@@ -68,7 +68,7 @@ resource "azurerm_virtual_machine_extension" "citrix_cloud_connector_dsc" {
         "AdDomainAdminName": "${var.active_directory_admin_username}",
         "CustomerId": "${var.citrix_cloud_customer_id}",
         "ClientId": "${var.citrix_cloud_client_id}",
-        "ResourceLocationId": "${citrix_resource_location.cloud_connector_resource_location.id}",
+        "ResourceLocationId": "${citrix_cloud_resource_location.cloud_connector_resource_location.id}",
         "IsJpCustomer": ${var.citrix_cloud_jp_customer_flag}
       }
     }

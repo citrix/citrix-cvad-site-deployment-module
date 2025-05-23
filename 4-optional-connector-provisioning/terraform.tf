@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.1.0"
+  required_version = ">= 1.4.0"
 
   required_providers {
     azurerm = {
@@ -14,7 +14,7 @@ terraform {
 
     citrix = {
       source = "citrix/citrix"
-      version = ">=0.6.0"
+      version = ">=1.0.18"
     }
 
     local = {
@@ -44,7 +44,9 @@ provider "azurerm" {
 }
 
 provider "citrix" {
-  customer_id   = var.citrix_cloud_customer_id
-  client_id     = var.citrix_cloud_client_id
-  client_secret = var.citrix_cloud_client_secret
+  cvad_config = {
+    customer_id   = var.citrix_cloud_customer_id
+    client_id     = var.citrix_cloud_client_id
+    client_secret = var.citrix_cloud_client_secret
+  }
 }
