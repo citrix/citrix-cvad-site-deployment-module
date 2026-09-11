@@ -61,6 +61,7 @@ Configuration New-ConnectorInstall {
 
     $connectorInstallerFile = "$tempDir\cwcconnector.exe"
     $connectorDownloadUri = "https://downloads.$baseUrl/$CustomerId/connector/cwcconnector.exe"
+    $connectorInstallParamsFile = "$tempDir\cwcconnector_install_params.json"
 
     $logFilePath = "$($tempDir)\ConnectorSetup.log"
 
@@ -191,19 +192,74 @@ Configuration New-ConnectorInstall {
 
             SetScript = {
                 Add-content $using:logFilePath -value "$(get-date -Format 'yyyy-MM-dd HH:mm:ss.ffff K') [Set-InstallConnector] Install and configure connector software."
-                $retryCount = 0
-                while ($retryCount -lt 3){
-                    Invoke-WebRequest -Uri $using:connectorDownloadUri -OutFile $using:connectorInstallerFile
-                    
-                    $proc = Start-Process -FilePath $using:connectorInstallerFile -ArgumentList "/Customer:$using:CustomerId /ClientId:$using:ClientId /ClientSecret:$using:ClientSecret /ResourceLocationId:$using:ResourceLocationId /AcceptTermsOfService:Yes /q" -PassThru -Wait
-                    New-ItemProperty -Path "HKLM:\SOFTWARE\Citrix\CloudServices\AgentFoundation" -Name "ConnectorInstallExitCode" -Value $proc.ExitCode -Force
-                    
-                    if ($proc.ExitCode -eq 0){
-                        break;
+
+                # Passing /ClientSecret: on the command line would undo the protectedSettings boundary:
+                # process command lines are readable locally and captured by command-line auditing.
+                $paramsFilePath = $using:connectorInstallParamsFile
+
+                try {
+                    # Creating over an existing file would adopt its owner and explicit ACEs, leaving
+                    # whoever planted it able to read the secret; this also clears a stranded file.
+                    Remove-Item -Path $paramsFilePath -Force -ErrorAction SilentlyContinue
+
+                    # Build the security descriptor from scratch rather than from the file, and apply it
+                    # as the file is created, so the secret is never on disk under any other permissions.
+                    # Well-known SIDs are used rather than account names because those names are localized.
+                    $fileSecurity = New-Object System.Security.AccessControl.FileSecurity
+                    $fileSecurity.SetAccessRuleProtection($true, $false)
+                    foreach ($wellKnownSid in @("S-1-5-18", "S-1-5-32-544")) {
+                        $fileSecurity.AddAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule(
+                            (New-Object System.Security.Principal.SecurityIdentifier($wellKnownSid)),
+                            "FullControl",
+                            "Allow"
+                        )))
                     }
 
-                    Remove-Item -Path $using:connectorInstallerFile -Force
-                    $retryCount++
+                    $installParams = @{
+                        customerName         = $using:CustomerId
+                        clientId             = $using:ClientId
+                        clientSecret         = $using:ClientSecret
+                        resourceLocationId   = $using:ResourceLocationId
+                        acceptTermsOfService = "true"
+                    }
+
+                    # CreateNew fails rather than overwrites if the path still exists, so a file that
+                    # could not be removed above stops the install instead of leaking into it.
+                    # UTF8Encoding($false) so that no byte order mark is prepended to the JSON.
+                    $paramsStream = New-Object System.IO.FileStream(
+                        $paramsFilePath,
+                        [System.IO.FileMode]::CreateNew,
+                        [System.Security.AccessControl.FileSystemRights]::Write,
+                        [System.IO.FileShare]::None,
+                        4096,
+                        [System.IO.FileOptions]::None,
+                        $fileSecurity
+                    )
+                    try {
+                        $paramsBytes = (New-Object System.Text.UTF8Encoding($false)).GetBytes(($installParams | ConvertTo-Json))
+                        $paramsStream.Write($paramsBytes, 0, $paramsBytes.Length)
+                    }
+                    finally {
+                        $paramsStream.Dispose()
+                    }
+
+                    $retryCount = 0
+                    while ($retryCount -lt 3){
+                        Invoke-WebRequest -Uri $using:connectorDownloadUri -OutFile $using:connectorInstallerFile
+
+                        $proc = Start-Process -FilePath $using:connectorInstallerFile -ArgumentList "/q /ParametersFilePath:`"$paramsFilePath`"" -PassThru -Wait
+                        New-ItemProperty -Path "HKLM:\SOFTWARE\Citrix\CloudServices\AgentFoundation" -Name "ConnectorInstallExitCode" -Value $proc.ExitCode -Force
+
+                        if ($proc.ExitCode -eq 0){
+                            break;
+                        }
+
+                        Remove-Item -Path $using:connectorInstallerFile -Force
+                        $retryCount++
+                    }
+                }
+                finally {
+                    Remove-Item -Path $paramsFilePath -Force -ErrorAction SilentlyContinue
                 }
             }
 
